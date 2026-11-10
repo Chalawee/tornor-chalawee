@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>สะสมแต้ม</title>
 
-  <!-- ตั้งค่าสำหรับเปิดเต็มจอเหมือนแอป (iOS Standalone) -->
+  <!-- ตั้งค่าเปิดเต็มจอ (Standalone) -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="สะสมแต้ม">
 
-  <!-- ไอคอนหน้าจอโฮมรูปน้องแฮมสเตอร์ (แปลงจาก SVG โดยตรง ไม่ต้องโหลดไฟล์แยก) -->
-  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180' width='180' height='180'><rect width='180' height='180' rx='40' fill='%23221b24'/><circle cx='46' cy='48' r='20' fill='%23f6c77d'/><circle cx='46' cy='48' r='12' fill='%23f99bb1'/><circle cx='134' cy='48' r='20' fill='%23f6c77d'/><circle cx='134' cy='48' r='12' fill='%23f99bb1'/><ellipse cx='90' cy='98' rx='62' ry='54' fill='%23fae0aa'/><ellipse cx='90' cy='112' rx='34' ry='24' fill='%23ffffff'/><circle cx='68' cy='88' r='7' fill='%23221b24'/><circle cx='112' cy='88' r='7' fill='%23221b24'/><ellipse cx='52' cy='102' rx='12' ry='7' fill='%23f99bb1'/><ellipse cx='128' cy='102' rx='12' ry='7' fill='%23f99bb1'/><path d='M85 102 L95 102 L90 108 Z' fill='%23f99bb1'/><path d='M90 108 L90 114' stroke='%23221b24' stroke-width='2'/><rect x='86' y='114' width='8' height='8' rx='2' fill='%23ffffff' stroke='%23221b24' stroke-width='1.5'/></svg>">
+  <!-- ไอคอนหน้าจอโฮม: รูปเดี่ยว -->
+  <link rel="apple-touch-icon" href="icon.png">
 
   <style>
     * {
@@ -52,14 +52,18 @@
       align-items: center;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
-    .hamster-avatar {
-      width: 120px;
-      height: 120px;
-      margin-bottom: 8px;
+    .photo-avatar {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #f79ac0;
+      box-shadow: 0 4px 16px rgba(247, 154, 192, 0.4);
+      margin-bottom: 12px;
       transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .hamster-avatar.bounce {
-      transform: scale(1.15) rotate(3deg);
+    .photo-avatar.bounce {
+      transform: scale(1.12) rotate(3deg);
     }
     .score-value {
       font-size: 3rem;
@@ -74,7 +78,7 @@
       margin-top: 6px;
     }
     .status-text {
-      margin-top: 22px;
+      margin-top: 20px;
       font-size: 0.95rem;
       color: #dfcbd5;
     }
@@ -157,27 +161,11 @@
 <body>
 
   <div class="header-title">
-    <span>🌸</span> สะสมแต้มกับน้องแฮมสเตอร์ <span>🌸</span>
+    <span>🌸</span> สะสมแต้ม <span>🌸</span>
   </div>
 
   <div class="card">
-    <!-- ภาพเวกเตอร์น้องแฮมสเตอร์ -->
-    <svg class="hamster-avatar" id="avatar" viewBox="0 0 160 160">
-      <circle cx="36" cy="38" r="18" fill="#f6c77d"/>
-      <circle cx="36" cy="38" r="10" fill="#f99bb1"/>
-      <circle cx="124" cy="38" r="18" fill="#f6c77d"/>
-      <circle cx="124" cy="38" r="10" fill="#f99bb1"/>
-      <ellipse cx="80" cy="85" rx="56" ry="50" fill="#fae0aa"/>
-      <ellipse cx="80" cy="98" rx="30" ry="22" fill="#ffffff"/>
-      <circle cx="60" cy="78" r="6" fill="#221b24"/>
-      <circle cx="100" cy="78" r="6" fill="#221b24"/>
-      <ellipse cx="46" cy="89" rx="10" ry="6" fill="#f99bb1"/>
-      <ellipse cx="114" cy="89" rx="10" ry="6" fill="#f99bb1"/>
-      <path d="M76 89 L84 89 L80 94 Z" fill="#f99bb1"/>
-      <path d="M80 94 L80 99" stroke="#221b24" stroke-width="1.6"/>
-      <rect x="76.5" y="99" width="7" height="7" rx="1.5" fill="#ffffff" stroke="#221b24" stroke-width="1.2"/>
-    </svg>
-
+    <img src="avatar.jpg" alt="Avatar" class="photo-avatar" id="avatarImg" onerror="this.src='avatar.png'">
     <div class="score-value" id="scoreDisplay">0</div>
     <div class="score-target">จาก 10,000 แต้ม</div>
     <div class="status-text" id="statusMessage">แตะปุ่มเพื่อเริ่มสะสมแต้มกัน</div>
@@ -210,7 +198,7 @@
   <script>
     const TARGET = 10000;
     const STEP = 10;
-    const STORAGE_KEY = "hamster_points_tracker";
+    const STORAGE_KEY = "custom_points_tracker";
 
     let state = {
       score: 0,
@@ -218,7 +206,6 @@
       history: []
     };
 
-    // โหลดข้อมูลเก่าที่เคยบันทึกไว้
     function loadData() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -231,7 +218,6 @@
       render();
     }
 
-    // เซฟข้อมูลลงในความจำเครื่อง
     function saveData() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
@@ -256,7 +242,6 @@
       }
     }
 
-    // ฟังก์ชันกดเพิ่มแต้ม
     document.getElementById('btnAdd').addEventListener('click', () => {
       state.history.push({ score: state.score, count: state.count });
       state.score += STEP;
@@ -264,13 +249,11 @@
       saveData();
       render();
 
-      // แอนิเมชันเด้งของน้องแฮมสเตอร์
-      const avatar = document.getElementById('avatar');
-      avatar.classList.add('bounce');
-      setTimeout(() => avatar.classList.remove('bounce'), 160);
+      const img = document.getElementById('avatarImg');
+      img.classList.add('bounce');
+      setTimeout(() => img.classList.remove('bounce'), 160);
     });
 
-    // ฟังก์ชันย้อนกลับ
     document.getElementById('btnUndo').addEventListener('click', () => {
       if (state.history.length > 0) {
         const last = state.history.pop();
@@ -281,7 +264,6 @@
       }
     });
 
-    // ฟังก์ชันเริ่มใหม่
     document.getElementById('btnReset').addEventListener('click', () => {
       if (confirm("ต้องการรีเซ็ตแต้มกลับเป็น 0 ใช่ไหม?")) {
         state = { score: 0, count: 0, history: [] };
